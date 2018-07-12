@@ -18,4 +18,22 @@ CREATE TABLE [dbo].[Heroes](
 ) ON [PRIMARY]
 GO
 
+CREATE TABLE [dbo].[CreditCards](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[HeroeId] [int] NOT NULL,
+	[Number] [nvarchar](50) NOT NULL,
+ CONSTRAINT [PK_CreditCards] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[CreditCards]  WITH CHECK ADD  CONSTRAINT [FK_CreditCards_Heroes] FOREIGN KEY([HeroeId])
+REFERENCES [dbo].[Heroes] ([Id])
+GO
+
+ALTER TABLE [dbo].[CreditCards] CHECK CONSTRAINT [FK_CreditCards_Heroes]
+GO
+
 
