@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TOHWebApi.Model
 {
-    public class Heroe
+    public class Hero
     {
         public int Id { get; set; }
 

@@ -8,7 +8,7 @@ using TOHWebApi.Repository;
 
 namespace TOHWebApi.Controllers
 {
-    [Route("api/[controller]")]
+    
     public class HeroesController:Controller
     {
         private readonly IHeroesRepository _heroesRepository;
@@ -18,13 +18,31 @@ namespace TOHWebApi.Controllers
             _heroesRepository = heroesRepository;
         }
 
-        
-        public async Task<ActionResult> GetAll([FromQuery]string filter)
+        [Route("api/heroes")]
+        public async Task<ActionResult> GetAll([FromQuery] string filter)
         {
-            var result = _heroesRepository.GetAll(filter);
+            IEnumerable<Hero> result;
+            if (String.IsNullOrEmpty(filter))
+            {
+                result = await _heroesRepository.GetAll();
+            }
+            else
+            {
+                result = await _heroesRepository.GetAll(filter);
+            }
+            
+            return new JsonResult(result);
+        }
+        
+        [Route("api/heroes/{id:int}")]
+        public async Task<ActionResult> GetById(int id)
+        {
+            var result = await _heroesRepository.GetById(id);
 
             return new JsonResult(result);
         }
+
+
 
 
     }
