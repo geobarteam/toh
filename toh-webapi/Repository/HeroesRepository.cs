@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using TOHWebApi.Model;
 
@@ -18,101 +19,30 @@ namespace TOHWebApi.Repository
 
     public class HeroesRepository : IHeroesRepository
     {
-        private string _connectionString;
-        public HeroesRepository(IConfiguration configuration)
+        private HeroesDbContext _dbContext;
+
+        public HeroesRepository(HeroesDbContext dbContext)
         {
-            _connectionString = configuration.GetConnectionString("DefaultConnection");
-
+            this._dbContext = dbContext;
         }
-        
-        private static Hero CreateHero(SqlDataReader reader)
-        {
-            return new Hero
-            {
-                Id = Convert.ToInt32(reader["Id"]),
-                Name = reader["Name"].ToString()
-            };
-        }
-
-
+       
 
         public async Task<IEnumerable<Hero>> GetAll(string nameFilter)
         {
-
-
-            using (SqlConnection connection =
-                new SqlConnection(_connectionString))
-            {
-                // Create the Command and Parameter objects.
-                SqlCommand command = new SqlCommand("SearchHeroes", connection);
-                command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.Add("SearchTerm", SqlDbType.NVarChar, 255).Value = nameFilter;
-                connection.Open();
-                SqlDataReader reader = await command.ExecuteReaderAsync();
-                var heroes = new List<Hero>();
-
-                while (reader.Read())
-                {
-                    heroes.Add(CreateHero(reader));
-                }
-                reader.Close();
-
-                return heroes;
-            }
+            var query = this._dbContext.Heroes.Where(
+                hero => hero.Name.ToUpper().Contains(nameFilter.ToUpper()));
+            return await query.ToArrayAsync();
         }
 
         public async Task<IEnumerable<Hero>> GetAll()
         {
-            string queryString =
-                $"SELECT * FROM Heroes";
-
-
-            using (SqlConnection connection =
-                new SqlConnection(_connectionString))
-            {
-                // Create the Command and Parameter objects.
-                SqlCommand command = new SqlCommand(queryString, connection);
-                
-                connection.Open();
-                SqlDataReader reader = await command.ExecuteReaderAsync();
-                var heroes = new List<Hero>();
-
-                while (reader.Read())
-                {
-                    heroes.Add(CreateHero(reader));
-                }
-                reader.Close();
-
-                return heroes;
-            }
+            return await this._dbContext.Heroes.ToArrayAsync();
         }
 
 
         public async Task<Hero> GetById(int id)
         {
-            string queryString =
-                $"SELECT * FROM Heroes where id = @id";
-
-            var heroes = new List<Hero>();
-
-            using (SqlConnection connection =
-                new SqlConnection(_connectionString))
-            {
-                // Create the Command and Parameter objects.
-                SqlCommand command = new SqlCommand(queryString, connection);
-                command.Parameters.Add("@id", SqlDbType.Int).Value = id;
-                Hero hero = null;
-                connection.Open();
-                SqlDataReader reader = await command.ExecuteReaderAsync();
-                while (reader.Read())
-                {
-                    hero = CreateHero(reader);
-                }
-                reader.Close();
-
-                return hero;
-
-            }
+            return await this._dbContext.Heroes.FirstOrDefaultAsync(hero => hero.Id == id);
         }
     }
 }
