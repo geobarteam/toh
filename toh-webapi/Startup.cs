@@ -31,7 +31,7 @@ namespace toh_webapi
                     {
                         optionsBuilder.EnableRetryOnFailure();
                     }));
-
+            services.Configure<IISOptions>(options => { options.AutomaticAuthentication = true; });
             services.AddMvc();
             services.AddScoped<IHeroesRepository, HeroesRepository>();
         }
@@ -40,6 +40,7 @@ namespace toh_webapi
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseDeveloperExceptionPage();
+            app.UseAuthentication();
             app.UseMvc();
         }
     }
