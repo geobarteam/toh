@@ -2,6 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+    <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
+    <IsPackable>false</IsPackable>
+
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,4 +20,30 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="toh-client\**" />
+    <EmbeddedResource Remove="toh-client\**" />
+  </ItemGroup>
+
+  <Target Name="EnsureNode">
+    <Exec Command="node --version" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+    </Exec>
+    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+  </Target>
+  <!-- Do not want to run it as in debug mode I use 'npm start' from ./angular-app >
+  <Target Name="DebugRunNgBuild" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' ">
+    <CallTarget Targets="EnsureNode" />
+    <Message Importance="high" Text="Performing ng build for dev build..." />
+    <Exec Command="npm run-script build" />
+  </Target>
+  <-->
+  <Target Name="ReleaseRunNgBuild" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Release' ">
+    <CallTarget Targets="EnsureNode" />
+    <Message Importance="high" Text="Install packages..." />
+    <Exec Command="npm install" />
+    <Message Importance="high" Text="Performing ng build for prd build..." />
+    <Exec Command="npm run-script build" />
+  </Target>
+  
 </Project>

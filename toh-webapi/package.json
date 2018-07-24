@@ -1,0 +1,10 @@
+{
+  "name": "core-angular-example",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {
+    "install": "cd ../toh-client & npm install",
+    "start": "cd ../toh-client & npm start",
+    "build": "cd ../toh-client & npm run-script build"
+  }
+}
