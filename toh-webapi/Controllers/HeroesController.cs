@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TOHWebApi.Model;
 using TOHWebApi.Repository;
@@ -18,7 +19,7 @@ namespace TOHWebApi.Controllers
             _heroesRepository = heroesRepository;
         }
 
-        [Route("api/heroes")]
+        [Route("api/heroes"), Authorize]
         public async Task<ActionResult> GetAll([FromQuery] string filter)
         {
             IEnumerable<Hero> result;
@@ -34,16 +35,12 @@ namespace TOHWebApi.Controllers
             return new JsonResult(result);
         }
         
-        [Route("api/heroes/{id:int}")]
+        [Route("api/heroes/{id:int}"), Authorize]
         public async Task<ActionResult> GetById(int id)
         {
             var result = await _heroesRepository.GetById(id);
 
             return new JsonResult(result);
         }
-
-
-
-
     }
 }
